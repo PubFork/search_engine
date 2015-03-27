@@ -6,15 +6,17 @@
 
 template <typename Type>
 struct IndexedElement {
-    typedef typename std::vector<Type>::iterator index;
-    std::vector<index> indexes;
+    typedef typename std::vector<Type>::iterator ptr;
+    std::vector<ptr> indexes;
     Type value;
 };
 
 class SearchEngine {
+    public:
+        typedef IndexedElement<std::string> indexedElement;
     private:
         bool isIndexed;
-        std::vector<IndexedElement<std::string> > indexedWords;
+        std::vector<indexedElement> indexedWords;
         std::vector<std::string> texts;
     public:
         SearchEngine();

@@ -23,13 +23,13 @@ bool SearchEngine::BuildIndexes() {
         return false;
     }
 
-    for (std::vector<std::string>::iterator i = texts.begin(); i != texts.end(); i++) {
+    for (indexedElement::ptr i = texts.begin(); i != texts.end(); i++) {
         std::string word;
         std::stringstream ss(*i);
 
         while (ss >> word) {
             bool add = true;
-            std::vector<IndexedElement<std::string> >::iterator j;
+            std::vector<indexedElement>::iterator j;
             for (j = indexedWords.begin(); j != indexedWords.end(); j++) {
                 if (j->value == word) {
                     j->indexes.push_back(i);
@@ -41,7 +41,7 @@ bool SearchEngine::BuildIndexes() {
                 }
             }
             if (add) {
-                IndexedElement<std::string> element;
+                indexedElement element;
                 element.value = word;
                 element.indexes.push_back(i);
                 indexedWords.insert(j, element);
@@ -56,73 +56,26 @@ bool SearchEngine::BuildIndexes() {
 std::vector<std::string> SearchEngine::Search(std::string text) {
     std::string word;
     std::stringstream ss(text);
+    std::vector<std::string> results;
 
     while (ss >> word) {
-    }
-
-    /*IndexList *pIndexes = new IndexList();
-    char *acText, *pWord;
-    acText = new char[sText.size()+1];
-    strcpy(acText, sText.c_str());
-    pWord = strtok(acText, " ");
-    unsigned int uiCounter = 0;
-    while (pWord != NULL) {
-        unsigned int uiStart = 0;
-        unsigned int uiEnd = uiWordCount-1;
-        while (uiEnd != uiStart) {
-            bool bIsSmaller = false;
-            unsigned int k, uiLength, uiCheck = (uiStart+uiEnd)/2;
-            uiLength = std::min(strlen(pWord), strlen(pIndexTable[uiCheck].acWord));
-            for (k = 0; k < uiLength; k++) {
-                if (pIndexTable[uiCheck].acWord[k] != pWord[k]) {
-                    if (pIndexTable[uiCheck].acWord[k] < pWord[k]) {
-                        bIsSmaller = true;
-                    }
-                    break;
-                }
-            }
-            if ((k == uiLength) && (strlen(pIndexTable[uiCheck].acWord) < strlen(pWord))) {
-                bIsSmaller = true;
-            }
-            if (bIsSmaller) {
-                uiStart = uiCheck+1;
+        unsigned int begin = 0, end = indexedWords.size() - 1;
+        while (begin != end) {
+            unsigned int offset = (begin + end) >> 1;
+            std::string check = indexedWords[offset].value;
+            if (check < word) {
+                begin = offset + 1;
             } else {
-                uiEnd = uiCheck;
+                end = offset;
             }
         }
-        if (!strcmp(pWord, pIndexTable[uiStart].acWord)) {
-            unsigned int uiIndex;
-            if (pIndexTable[uiStart].pIndexes->GetFirst(&uiIndex)) {
-                if (pIndexes->Add(uiIndex)) {
-                    uiCounter++;
-                }
-                while (pIndexTable[uiStart].pIndexes->GetNext(&uiIndex)) {
-                    if (pIndexes->Add(uiIndex)) {
-                        uiCounter++;
-                    }
-                }
-            }
-        }
-        pWord = strtok(NULL, " ");
-    }
-    delete [] acText;
-
-    std::string *pResults = NULL;
-    if (uiCounter > 0) {
-        unsigned int uiIndex, i = 1;
-        pResults = new std::string[uiCounter];
-        if (pIndexes->GetFirst(&uiIndex)) {
-            pResults[0] = pTextArray[uiIndex];
-            while (pIndexes->GetNext(&uiIndex)) {
-                pResults[i] = pTextArray[uiIndex];
-                i++;
+        if (indexedWords[begin].value == word) {
+            indexedElement *element = &indexedWords[begin];
+            for (std::vector<indexedElement::ptr>::iterator i = element->indexes.begin(); i != element->indexes.end(); i++) {
+                results.push_back(*(*i));
             }
         }
     }
-    *pStrings = pResults;
 
-    delete pIndexes;
-    return uiCounter;*/
-    std::vector<std::string> results;
     return results;
 }
