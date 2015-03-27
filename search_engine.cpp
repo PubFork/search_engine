@@ -15,10 +15,10 @@ SearchEngine::SearchEngine() {
     pCurrentText = NULL;
 }
 
-bool SearchEngine::AddText(string sText) {
+bool SearchEngine::AddText(std::string sText) {
     if (bIsIndexed) {
         return false;
-    }    
+    }
     if (pTextList != NULL) {
         pCurrentText->pNext = new TextElement;
         pCurrentText = pCurrentText->pNext;
@@ -38,7 +38,7 @@ bool SearchEngine::BuildIndexes() {
     }
 
     unsigned int i = 0;
-    pTextArray = new string[uiTextCount];
+    pTextArray = new std::string[uiTextCount];
     TextElement *pElement = pTextList;
     while (pTextList != NULL) {
         pElement = pTextList;
@@ -62,7 +62,7 @@ bool SearchEngine::BuildIndexes() {
             while (pCurrent != NULL) {
                 bool bIsSmaller = false;
                 unsigned int k, uiLength;
-                uiLength = min(strlen(pCurrent->acWord), strlen(pWord));
+                uiLength = std::min(strlen(pCurrent->acWord), strlen(pWord));
                 for (k = 0; k < uiLength; k++) {
                     if (pCurrent->acWord[k] != pWord[k]) {
                         if (pCurrent->acWord[k] > pWord[k]) {
@@ -103,7 +103,7 @@ bool SearchEngine::BuildIndexes() {
         }
         delete [] acText;
     }
-    
+
     i = 0;
     pIndexTable = new SearchElement[uiWordCount];
     WordElement *pTemp = pFirstWord;
@@ -115,12 +115,12 @@ bool SearchEngine::BuildIndexes() {
         delete pDelete;
         i++;
     }
-    
+
     bIsIndexed = true;
     return true;
 }
 
-unsigned int SearchEngine::Search(string sText, string **pStrings) {
+unsigned int SearchEngine::Search(std::string sText, std::string **pStrings) {
     IndexList *pIndexes = new IndexList();
     char *acText, *pWord;
     acText = new char[sText.size()+1];
@@ -133,7 +133,7 @@ unsigned int SearchEngine::Search(string sText, string **pStrings) {
         while (uiEnd != uiStart) {
             bool bIsSmaller = false;
             unsigned int k, uiLength, uiCheck = (uiStart+uiEnd)/2;
-            uiLength = min(strlen(pWord), strlen(pIndexTable[uiCheck].acWord));
+            uiLength = std::min(strlen(pWord), strlen(pIndexTable[uiCheck].acWord));
             for (k = 0; k < uiLength; k++) {
                 if (pIndexTable[uiCheck].acWord[k] != pWord[k]) {
                     if (pIndexTable[uiCheck].acWord[k] < pWord[k]) {
@@ -150,7 +150,7 @@ unsigned int SearchEngine::Search(string sText, string **pStrings) {
             } else {
                 uiEnd = uiCheck;
             }
-        }        
+        }
         if (!strcmp(pWord, pIndexTable[uiStart].acWord)) {
             unsigned int uiIndex;
             if (pIndexTable[uiStart].pIndexes->GetFirst(&uiIndex)) {
@@ -158,7 +158,7 @@ unsigned int SearchEngine::Search(string sText, string **pStrings) {
                     uiCounter++;
                 }
                 while (pIndexTable[uiStart].pIndexes->GetNext(&uiIndex)) {
-                    if (pIndexes->Add(uiIndex)) { 
+                    if (pIndexes->Add(uiIndex)) {
                         uiCounter++;
                     }
                 }
@@ -167,11 +167,11 @@ unsigned int SearchEngine::Search(string sText, string **pStrings) {
         pWord = strtok(NULL, " ");
     }
     delete [] acText;
-    
-    string *pResults = NULL;
+
+    std::string *pResults = NULL;
     if (uiCounter > 0) {
         unsigned int uiIndex, i = 1;
-        pResults = new string[uiCounter];
+        pResults = new std::string[uiCounter];
         if (pIndexes->GetFirst(&uiIndex)) {
             pResults[0] = pTextArray[uiIndex];
             while (pIndexes->GetNext(&uiIndex)) {
@@ -179,9 +179,9 @@ unsigned int SearchEngine::Search(string sText, string **pStrings) {
                 i++;
             }
         }
-    }    
+    }
     *pStrings = pResults;
-        
+
     delete pIndexes;
     return uiCounter;
 }

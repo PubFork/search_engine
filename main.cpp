@@ -1,6 +1,6 @@
+#include "search_engine.h"
 #include <cstdlib>
 #include <iostream>
-#include "search_engine.h"
 
 using namespace std;
 
@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     } else {
         cout << "No results to display!" << endl;
     }
-    
+
     cout << "Press the enter key to continue ...";
     cin.get();
 
