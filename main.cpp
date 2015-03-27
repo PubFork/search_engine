@@ -6,19 +6,17 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    SearchEngine *pSearchEngine = new SearchEngine();
-    pSearchEngine->AddText("agatka jest fajna");
-    pSearchEngine->AddText("adam to kretyn");
-    pSearchEngine->AddText("marcin jest zajebisty");
-    pSearchEngine->BuildIndexes();
-    string *pResults;
-    unsigned int uiResults = pSearchEngine->Search("jest", &pResults);
-    if (uiResults) {
+    SearchEngine *searchEngine = new SearchEngine();
+    searchEngine->AddText("agatka jest fajna");
+    searchEngine->AddText("adam to kretyn");
+    searchEngine->AddText("marcin jest zajebisty");
+    searchEngine->BuildIndexes();
+    vector<string> results = searchEngine->Search("jest");
+    if (results.size()) {
         cout << "Texts containing '" << "jest" << "':" << endl;
-        for (unsigned int i = 0; i < uiResults; i++) {
-            cout << pResults[i] << endl;
+        for (vector<string>::iterator i = results.begin(); i != results.end(); i++) {
+            cout << *i << endl;
         }
-        delete [] pResults;
     } else {
         cout << "No results to display!" << endl;
     }
@@ -26,6 +24,6 @@ int main(int argc, char *argv[])
     cout << "Press the enter key to continue ...";
     cin.get();
 
-    delete pSearchEngine;
+    delete searchEngine;
     return EXIT_SUCCESS;
 }

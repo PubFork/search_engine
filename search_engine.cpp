@@ -1,127 +1,66 @@
 #include "search_engine.h"
 #include <string.h>
-
-struct WordElement {
-    char *acWord;
-    IndexList *pIndexes;
-    WordElement *pNext;
-};
+#include <sstream>
+#include <iostream>
 
 SearchEngine::SearchEngine() {
-    uiTextCount = 0;
-    uiWordCount = 0;
-    pTextList = NULL;
-    bIsIndexed = false;
-    pCurrentText = NULL;
+    isIndexed = false;
 }
 
-bool SearchEngine::AddText(std::string sText) {
-    if (bIsIndexed) {
+SearchEngine::~SearchEngine() {
+}
+
+bool SearchEngine::AddText(std::string text) {
+    if (isIndexed) {
         return false;
     }
-    if (pTextList != NULL) {
-        pCurrentText->pNext = new TextElement;
-        pCurrentText = pCurrentText->pNext;
-    } else {
-        pTextList = new TextElement;
-        pCurrentText = pTextList;
-    }
-    pCurrentText->sText = sText;
-    pCurrentText->pNext = NULL;
-    uiTextCount++;
+    texts.push_back(text);
     return true;
 }
 
 bool SearchEngine::BuildIndexes() {
-    if (bIsIndexed) {
+    if (isIndexed) {
         return false;
     }
 
-    unsigned int i = 0;
-    pTextArray = new std::string[uiTextCount];
-    TextElement *pElement = pTextList;
-    while (pTextList != NULL) {
-        pElement = pTextList;
-        pTextArray[i] = pTextList->sText;
-        pTextList = pTextList->pNext;
-        delete pElement;
-        i++;
-    }
+    for (std::vector<std::string>::iterator i = texts.begin(); i != texts.end(); i++) {
+        std::string word;
+        std::stringstream ss(*i);
 
-    WordElement *pFirstWord = NULL;
-    for (i = 0; i < uiTextCount; i++) {
-        char *acText, *pWord;
-        unsigned int uiLength = pTextArray[i].size();
-        acText = new char[uiLength+1];
-        strcpy(acText, pTextArray[i].c_str());
-        pWord = strtok(acText, " ");
-        while (pWord != NULL) {
-            bool bAdd = true;
-            WordElement *pPrevious = NULL;
-            WordElement *pCurrent = pFirstWord;
-            while (pCurrent != NULL) {
-                bool bIsSmaller = false;
-                unsigned int k, uiLength;
-                uiLength = std::min(strlen(pCurrent->acWord), strlen(pWord));
-                for (k = 0; k < uiLength; k++) {
-                    if (pCurrent->acWord[k] != pWord[k]) {
-                        if (pCurrent->acWord[k] > pWord[k]) {
-                            bIsSmaller = true;
-                        }
-                        break;
-                    }
-                }
-                if (bIsSmaller || ((k == uiLength) && (strlen(pCurrent->acWord) > strlen(pWord)))) {
-                    break;
-                } else if ((k == uiLength) && (strlen(pCurrent->acWord) == strlen(pWord))) {
-                    pCurrent->pIndexes->Add(i);
-                    bAdd = false;
+        while (ss >> word) {
+            bool add = true;
+            std::vector<IndexedElement<std::string> >::iterator j;
+            for (j = indexedWords.begin(); j != indexedWords.end(); j++) {
+                if (j->value == word) {
+                    j->indexes.push_back(i);
+                    add = false;
                     break;
                 }
-                pPrevious = pCurrent;
-                pCurrent = pCurrent->pNext;
-            }
-            if (bAdd) {
-                WordElement *pAdded;
-                if (pPrevious != NULL) {
-                    pPrevious->pNext = new WordElement;
-                    pAdded = pPrevious->pNext;
-                } else {
-                    pAdded = new WordElement;
-                }
-                pAdded->pNext = pCurrent;
-                pAdded->pIndexes = new IndexList();
-                pAdded->acWord = new char[strlen(pWord)+1];
-                strcpy(pAdded->acWord, pWord);
-                pAdded->pIndexes->Add(i);
-                uiWordCount++;
-                if (pPrevious == NULL) {
-                    pFirstWord = pAdded;
+                if (word < j->value) {
+                    break;
                 }
             }
-            pWord = strtok(NULL, " ");
+            if (add) {
+                IndexedElement<std::string> element;
+                element.value = word;
+                element.indexes.push_back(i);
+                indexedWords.insert(j, element);
+            }
         }
-        delete [] acText;
     }
 
-    i = 0;
-    pIndexTable = new SearchElement[uiWordCount];
-    WordElement *pTemp = pFirstWord;
-    while (pTemp != NULL) {
-        pIndexTable[i].acWord = pTemp->acWord;
-        pIndexTable[i].pIndexes = pTemp->pIndexes;
-        WordElement *pDelete = pTemp;
-        pTemp = pTemp->pNext;
-        delete pDelete;
-        i++;
-    }
-
-    bIsIndexed = true;
+    isIndexed = true;
     return true;
 }
 
-unsigned int SearchEngine::Search(std::string sText, std::string **pStrings) {
-    IndexList *pIndexes = new IndexList();
+std::vector<std::string> SearchEngine::Search(std::string text) {
+    std::string word;
+    std::stringstream ss(text);
+
+    while (ss >> word) {
+    }
+
+    /*IndexList *pIndexes = new IndexList();
     char *acText, *pWord;
     acText = new char[sText.size()+1];
     strcpy(acText, sText.c_str());
@@ -183,22 +122,7 @@ unsigned int SearchEngine::Search(std::string sText, std::string **pStrings) {
     *pStrings = pResults;
 
     delete pIndexes;
-    return uiCounter;
-}
-
-SearchEngine::~SearchEngine() {
-    TextElement *pTemp;
-    while (pTextList != NULL) {
-        pTemp = pTextList;
-        pTextList = pTemp->pNext;
-        delete pTemp;
-    }
-    if (bIsIndexed) {
-        for (unsigned int i = 0; i < uiWordCount; i++) {
-            delete [] pIndexTable[i].acWord;
-            delete pIndexTable[i].pIndexes;
-        }
-        delete [] pIndexTable;
-        delete [] pTextArray;
-    }
+    return uiCounter;*/
+    std::vector<std::string> results;
+    return results;
 }

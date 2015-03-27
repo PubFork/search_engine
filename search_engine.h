@@ -1,33 +1,28 @@
 #ifndef SEARCH_ENGINE_H
 #define SEARCH_ENGINE_H
 
-#include "index_list.h"
 #include <string>
+#include <vector>
 
-struct SearchElement {
-    char *acWord;
-    IndexList *pIndexes;
-};
-
-struct TextElement {
-    std::string sText;
-    TextElement *pNext;
+template <typename Type>
+struct IndexedElement {
+    typedef typename std::vector<Type>::iterator index;
+    std::vector<index> indexes;
+    Type value;
 };
 
 class SearchEngine {
     private:
-        bool bIsIndexed;
-        std::string *pTextArray;
-        SearchElement *pIndexTable;
-        TextElement *pTextList, *pCurrentText;
-        unsigned int uiTextCount, uiWordCount;
+        bool isIndexed;
+        std::vector<IndexedElement<std::string> > indexedWords;
+        std::vector<std::string> texts;
     public:
         SearchEngine();
         ~SearchEngine();
 
-        bool AddText(std::string sText);
+        bool AddText(std::string text);
         bool BuildIndexes();
-        unsigned int Search(std::string sText, std::string **pStrings);
+        std::vector<std::string> Search(std::string text);
 };
 
 #endif
