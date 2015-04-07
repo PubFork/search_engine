@@ -19,3 +19,18 @@
 	<sstream>
 	<iostream>
 
+1428417319 source:/home/pi/Projects/search_engine/main.cpp
+	"search_engine.h"
+	<cstdlib>
+	<iostream>
+
+1428417319 /home/pi/Projects/search_engine/search_engine.h
+	<string>
+	<vector>
+
+1428417319 source:/home/pi/Projects/search_engine/search_engine.cpp
+	"search_engine.h"
+	<string.h>
+	<sstream>
+	<iostream>
+

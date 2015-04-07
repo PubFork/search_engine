@@ -11,15 +11,16 @@ int main(int argc, char *argv[])
     searchEngine->AddText("adam to kretyn");
     searchEngine->AddText("marcin jest zajebisty");
     searchEngine->BuildIndexes();
-    vector<string> results = searchEngine->Search("jest");
-    if (results.size()) {
+    vector<string> *results = searchEngine->Search("jest");
+    if (results->size()) {
         cout << "Texts containing '" << "jest" << "':" << endl;
-        for (vector<string>::iterator i = results.begin(); i != results.end(); i++) {
+        for (vector<string>::iterator i = results->begin(); i != results->end(); i++) {
             cout << *i << endl;
         }
     } else {
         cout << "No results to display!" << endl;
     }
+    delete results;
 
     cout << "Press the enter key to continue ...";
     cin.get();

@@ -24,7 +24,7 @@ class SearchEngine {
 
         bool AddText(std::string text);
         bool BuildIndexes();
-        std::vector<std::string> Search(std::string text);
+        std::vector<std::string> *Search(std::string text);
 };
 
 #endif

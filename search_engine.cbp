@@ -32,8 +32,6 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="index_list.cpp" />
-		<Unit filename="index_list.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="search_engine.cpp" />
 		<Unit filename="search_engine.h" />

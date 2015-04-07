@@ -53,10 +53,10 @@ bool SearchEngine::BuildIndexes() {
     return true;
 }
 
-std::vector<std::string> SearchEngine::Search(std::string text) {
+std::vector<std::string> *SearchEngine::Search(std::string text) {
     std::string word;
     std::stringstream ss(text);
-    std::vector<std::string> results;
+    std::vector<std::string> *results = new std::vector<std::string>();
 
     while (ss >> word) {
         unsigned int begin = 0, end = indexedWords.size() - 1;
@@ -72,7 +72,7 @@ std::vector<std::string> SearchEngine::Search(std::string text) {
         if (indexedWords[begin].value == word) {
             indexedElement *element = &indexedWords[begin];
             for (std::vector<indexedElement::ptr>::iterator i = element->indexes.begin(); i != element->indexes.end(); i++) {
-                results.push_back(*(*i));
+                results->push_back(*(*i));
             }
         }
     }
