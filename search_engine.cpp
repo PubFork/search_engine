@@ -1,16 +1,16 @@
 #include "search_engine.h"
-#include <string.h>
 #include <sstream>
 #include <iostream>
 
-SearchEngine::SearchEngine() {
-    isIndexed = false;
+using std::stringstream;
+
+SearchEngine::SearchEngine() : isIndexed(false) {
 }
 
 SearchEngine::~SearchEngine() {
 }
 
-bool SearchEngine::AddText(std::string text) {
+bool SearchEngine::AddText(string text) {
     if (isIndexed) {
         return false;
     }
@@ -23,16 +23,16 @@ bool SearchEngine::BuildIndexes() {
         return false;
     }
 
-    for (indexedElement::ptr i = texts.begin(); i != texts.end(); i++) {
-        std::string word;
-        std::stringstream ss(*i);
+    for (indexedElement::pointer i = texts.begin(); i != texts.end(); i++) {
+        string word;
+        stringstream ss(*i);
 
         while (ss >> word) {
             bool add = true;
-            std::vector<indexedElement>::iterator j;
+            vector<indexedElement>::iterator j;
             for (j = indexedWords.begin(); j != indexedWords.end(); j++) {
                 if (j->value == word) {
-                    j->indexes.push_back(i);
+                    j->pointers.push_back(i);
                     add = false;
                     break;
                 }
@@ -43,7 +43,7 @@ bool SearchEngine::BuildIndexes() {
             if (add) {
                 indexedElement element;
                 element.value = word;
-                element.indexes.push_back(i);
+                element.pointers.push_back(i);
                 indexedWords.insert(j, element);
             }
         }
@@ -53,16 +53,22 @@ bool SearchEngine::BuildIndexes() {
     return true;
 }
 
-std::vector<std::string> *SearchEngine::Search(std::string text) {
-    std::string word;
-    std::stringstream ss(text);
-    std::vector<std::string> *results = new std::vector<std::string>();
+vector<string> *SearchEngine::Search(string text) {
+    string word;
+    stringstream ss(text);
+    vector<string> *results = new vector<string>();
+
+    if (!indexedWords.size()) {
+        return results;
+    }
+
+    vector<indexedElement::pointer> pointers;
 
     while (ss >> word) {
-        unsigned int begin = 0, end = indexedWords.size() - 1;
+        unsigned int offset, begin = 0, end = indexedWords.size() - 1;
         while (begin != end) {
-            unsigned int offset = (begin + end) >> 1;
-            std::string check = indexedWords[offset].value;
+            offset = (begin + end) >> 1;
+            string check = indexedWords[offset].value;
             if (check < word) {
                 begin = offset + 1;
             } else {
@@ -71,10 +77,30 @@ std::vector<std::string> *SearchEngine::Search(std::string text) {
         }
         if (indexedWords[begin].value == word) {
             indexedElement *element = &indexedWords[begin];
-            for (std::vector<indexedElement::ptr>::iterator i = element->indexes.begin(); i != element->indexes.end(); i++) {
-                results->push_back(*(*i));
+            for (vector<indexedElement::pointer>::iterator i = element->pointers.begin(); i != element->pointers.end(); i++) {
+                if (!pointers.size()) {
+                    pointers.push_back(*i);
+                }
+                begin = 0; end = pointers.size();
+                while (begin != end) {
+                    offset = (begin + end) >> 1;
+                    indexedElement::pointer check = pointers[offset];
+                    if (check < *i) {
+                        begin = offset + 1;
+                    } else {
+                        end = offset;
+                    }
+                }
+                if (pointers[begin] != *i) {
+                    vector<indexedElement::pointer>::iterator position = pointers.begin() + begin;
+                    pointers.insert(position, *i);
+                }
             }
         }
+    }
+
+    for (vector<indexedElement::pointer>::iterator i = pointers.begin(); i != pointers.end(); i++) {
+        results->push_back(*(*i));
     }
 
     return results;

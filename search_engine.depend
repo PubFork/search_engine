@@ -34,3 +34,17 @@
 	<sstream>
 	<iostream>
 
+1429632372 source:c:\repos\cpp\search_engine\search_engine.cpp
+	"search_engine.h"
+	<sstream>
+	<iostream>
+
+1429631509 c:\repos\cpp\search_engine\search_engine.h
+	<string>
+	<vector>
+
+1429631310 source:c:\repos\cpp\search_engine\main.cpp
+	"search_engine.h"
+	<cstdlib>
+	<iostream>
+

@@ -4,27 +4,30 @@
 #include <string>
 #include <vector>
 
+using std::vector;
+using std::string;
+
 template <typename Type>
 struct IndexedElement {
-    typedef typename std::vector<Type>::iterator ptr;
-    std::vector<ptr> indexes;
+    typedef typename vector<Type>::iterator pointer;
+    vector<pointer> pointers;
     Type value;
 };
 
 class SearchEngine {
     public:
-        typedef IndexedElement<std::string> indexedElement;
+        typedef IndexedElement<string> indexedElement;
     private:
         bool isIndexed;
-        std::vector<indexedElement> indexedWords;
-        std::vector<std::string> texts;
+        vector<indexedElement> indexedWords;
+        vector<string> texts;
     public:
         SearchEngine();
         ~SearchEngine();
 
-        bool AddText(std::string text);
+        bool AddText(string text);
         bool BuildIndexes();
-        std::vector<std::string> *Search(std::string text);
+        vector<string> *Search(string text);
 };
 
 #endif
