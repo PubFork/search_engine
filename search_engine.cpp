@@ -1,6 +1,5 @@
 #include "search_engine.h"
 #include <sstream>
-#include <iostream>
 
 using std::stringstream;
 
@@ -28,23 +27,24 @@ bool SearchEngine::BuildIndexes() {
         stringstream ss(*i);
 
         while (ss >> word) {
-            bool add = true;
-            vector<indexedElement>::iterator j;
-            for (j = indexedWords.begin(); j != indexedWords.end(); j++) {
-                if (j->value == word) {
-                    j->pointers.push_back(i);
-                    add = false;
-                    break;
-                }
-                if (word < j->value) {
-                    break;
+            unsigned int offset, begin = 0, end = indexedWords.size();
+            while (begin != end) {
+                offset = (begin + end) >> 1;
+                string check = indexedWords[offset].value;
+                if (check < word) {
+                    begin = offset + 1;
+                } else {
+                    end = offset;
                 }
             }
-            if (add) {
+            if ((begin >= indexedWords.size()) || (indexedWords[begin].value != word)) {
                 indexedElement element;
                 element.value = word;
                 element.pointers.push_back(i);
-                indexedWords.insert(j, element);
+                vector<indexedElement>::iterator position = indexedWords.begin() + begin;
+                indexedWords.insert(position, element);
+            } else {
+                indexedWords[begin].pointers.push_back(i);
             }
         }
     }
@@ -91,7 +91,7 @@ vector<string> *SearchEngine::Search(string text) {
                         end = offset;
                     }
                 }
-                if (pointers[begin] != *i) {
+                if ((begin >= pointers.size()) || (pointers[begin] != *i)) {
                     vector<indexedElement::pointer>::iterator position = pointers.begin() + begin;
                     pointers.insert(position, *i);
                 }
