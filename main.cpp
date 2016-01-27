@@ -4,9 +4,9 @@
 
 using namespace std;
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-    SearchEngine *searchEngine = new SearchEngine();
+    SearchEngine* searchEngine = new SearchEngine();
 
     searchEngine->AddText("agatka jest fajna");
     searchEngine->AddText("adam to kretyn");
@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     string text = "jest fajna";
 
     searchEngine->BuildIndexes();
-    vector<string> *results = searchEngine->Search(text);
+    vector<string>* results = searchEngine->Search(text);
     if (results->size()) {
         cout << "Texts containing '" << text << "':" << endl;
         for (vector<string>::iterator i = results->begin(); i != results->end(); i++) {

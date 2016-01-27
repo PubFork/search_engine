@@ -22,7 +22,7 @@ bool SearchEngine::BuildIndexes() {
         return false;
     }
 
-    for (indexedElement::pointer i = texts.begin(); i != texts.end(); i++) {
+    for (IndexedElement::pointer i = texts.begin(); i != texts.end(); i++) {
         string word;
         stringstream ss(*i);
 
@@ -38,10 +38,10 @@ bool SearchEngine::BuildIndexes() {
                 }
             }
             if ((begin >= indexedWords.size()) || (indexedWords[begin].value != word)) {
-                indexedElement element;
+                IndexedElement element;
                 element.value = word;
                 element.pointers.push_back(i);
-                vector<indexedElement>::iterator position = indexedWords.begin() + begin;
+                vector<IndexedElement>::iterator position = indexedWords.begin() + begin;
                 indexedWords.insert(position, element);
             } else {
                 indexedWords[begin].pointers.push_back(i);
@@ -53,16 +53,16 @@ bool SearchEngine::BuildIndexes() {
     return true;
 }
 
-vector<string> *SearchEngine::Search(string text) {
+vector<string>* SearchEngine::Search(string text) {
     string word;
     stringstream ss(text);
-    vector<string> *results = new vector<string>();
+    vector<string>* results = new vector<string>();
 
     if (!indexedWords.size()) {
         return results;
     }
 
-    vector<indexedElement::pointer> pointers;
+    vector<IndexedElement::pointer> pointers;
 
     while (ss >> word) {
         unsigned int offset, begin = 0, end = indexedWords.size() - 1;
@@ -76,15 +76,15 @@ vector<string> *SearchEngine::Search(string text) {
             }
         }
         if (indexedWords[begin].value == word) {
-            indexedElement *element = &indexedWords[begin];
-            for (vector<indexedElement::pointer>::iterator i = element->pointers.begin(); i != element->pointers.end(); i++) {
+            IndexedElement* element = &indexedWords[begin];
+            for (vector<IndexedElement::pointer>::iterator i = element->pointers.begin(); i != element->pointers.end(); i++) {
                 if (!pointers.size()) {
                     pointers.push_back(*i);
                 }
                 begin = 0; end = pointers.size();
                 while (begin != end) {
                     offset = (begin + end) >> 1;
-                    indexedElement::pointer check = pointers[offset];
+                    IndexedElement::pointer check = pointers[offset];
                     if (check < *i) {
                         begin = offset + 1;
                     } else {
@@ -92,14 +92,14 @@ vector<string> *SearchEngine::Search(string text) {
                     }
                 }
                 if ((begin >= pointers.size()) || (pointers[begin] != *i)) {
-                    vector<indexedElement::pointer>::iterator position = pointers.begin() + begin;
+                    vector<IndexedElement::pointer>::iterator position = pointers.begin() + begin;
                     pointers.insert(position, *i);
                 }
             }
         }
     }
 
-    for (vector<indexedElement::pointer>::iterator i = pointers.begin(); i != pointers.end(); i++) {
+    for (vector<IndexedElement::pointer>::iterator i = pointers.begin(); i != pointers.end(); i++) {
         results->push_back(*(*i));
     }
 
