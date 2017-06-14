@@ -1,6 +1,5 @@
 #include "search_engine.h"
 #include <sstream>
-#include <iostream>
 
 using std::stringstream;
 
