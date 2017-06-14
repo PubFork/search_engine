@@ -48,3 +48,17 @@
 	<cstdlib>
 	<iostream>
 
+1496319008 source:c:\users\m.kondej3\documents\search_engine\main.cpp
+	"search_engine.h"
+	<cstdlib>
+	<iostream>
+
+1497458262 c:\users\m.kondej3\documents\search_engine\search_engine.h
+	<string>
+	<vector>
+
+1497461772 source:c:\users\m.kondej3\documents\search_engine\search_engine.cpp
+	"search_engine.h"
+	<sstream>
+	<iostream>
+

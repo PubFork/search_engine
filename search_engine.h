@@ -7,19 +7,15 @@
 using std::vector;
 using std::string;
 
-template <typename Type>
-struct IndexedElement {
-    typedef typename vector<Type>::iterator pointer;
-    vector<pointer> pointers;
-    Type value;
-};
-
 class SearchEngine {
-    public:
-        typedef IndexedElement<string> indexedElement;
     private:
-        bool isIndexed;
-        vector<indexedElement> indexedWords;
+        struct IndexedWord {
+            vector<unsigned int> offsets;
+            string word;
+        };
+
+        bool isLocked;
+        vector<IndexedWord> indexedWords;
         vector<string> texts;
     public:
         SearchEngine();
