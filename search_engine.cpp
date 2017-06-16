@@ -15,6 +15,10 @@ SearchEngine::~SearchEngine() {
 }
 
 bool SearchEngine::AddText(string text) {
+    if (isLocked) {
+        return false;
+    }
+
     isLocked = true;
 
     texts.push_back(text);
