@@ -121,7 +121,5 @@ vector<string> *SearchEngine::Search(string text) {
         results->push_back(texts[(*i).offset]);
     }
 
-    isLocked = false;
-
     return results;
 }
